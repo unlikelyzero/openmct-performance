@@ -1,0 +1,26 @@
+{
+    "name": "openmct-performance",
+    "version": "1.0.0",
+    "description": "",
+    "main": "",
+    "scripts": {
+      "test:example": "K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s examples/script.js -o experimental-prometheus-rw",
+      "test:example:browser": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run examples/browserScript.js -o experimental-prometheus-rw",
+      "test:example:combined": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run examples/combinedScript.js -o experimental-prometheus-rw",
+      "test:yamcs:search": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run yamcs/search.js -o experimental-prometheus-rw",
+      "har:record": "npx playwright open --save-har=yamcs/har/search.har http://localhost:9000",
+      "har:convert": "npx har-to-k6 yamcs/har/search.har -o yamcs/searchFromHar.js",
+      "test:yamcs:searchfromhar": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s yamcs/searchFromHar.js -o experimental-prometheus-rw"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "@types/k6": "^0.43.0"
+    },
+    "dependencies": {
+      "har-to-k6": "0.13.1",
+      "playwright": "1.26.0"
+    }
+  }
+  

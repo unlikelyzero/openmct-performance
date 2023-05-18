@@ -1,0 +1,56 @@
+# Use the official Node.js 18 base image
+FROM node:18 AS openmct-build
+
+# Set the working directory
+WORKDIR /openmct
+
+RUN git clone https://github.com/akhenry/openmct-yamcs.git .
+RUN npm install
+RUN npm run build:example
+RUN npm run build:dist
+RUN echo ls -latr
+
+COPY example/index.html /openmct/dist/index.html
+COPY example/index.js /openmct/dist/index.js
+
+
+# Use the official Apache base image
+FROM httpd:2.4
+
+# Enable mod_status
+RUN sed -i 's/#LoadModule\ status_module/LoadModule\ status_module/' /usr/local/apache2/conf/httpd.conf
+RUN sed -i 's/#ExtendedStatus/ExtendedStatus/' /usr/local/apache2/conf/httpd.conf
+
+# Enable mod_rewrite
+RUN sed -i 's/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/' /usr/local/apache2/conf/httpd.conf
+
+# Configure mod_status
+RUN echo '<Location "/server-status">' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '    SetHandler server-status' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '    Require all granted' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '</Location>' >> /usr/local/apache2/conf/httpd.conf
+
+# Copy the built OpenMCT project from the previous stage
+COPY --from=openmct-build /openmct/dist /usr/local/apache2/htdocs/openmct
+
+#node_modules/openmct/openmct.js
+COPY --from=openmct-build /openmct/node_modules/openmct/ /usr/local/apache2/htdocs/openmct
+
+
+# Configure Apache
+RUN sed -i 's#DocumentRoot "/usr/local/apache2/htdocs"#DocumentRoot "/usr/local/apache2/htdocs/openmct"#' /usr/local/apache2/conf/httpd.conf
+RUN echo '<Directory "/usr/local/apache2/htdocs/openmct">' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '    Options Indexes FollowSymLinks' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '    AllowOverride All' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '    Require all granted' >> /usr/local/apache2/conf/httpd.conf
+RUN echo '</Directory>' >> /usr/local/apache2/conf/httpd.conf
+
+# Create a rewrite rule for /openmct to index.html
+RUN echo 'RewriteEngine On' >> /usr/local/apache2/conf/httpd.conf
+RUN echo 'RewriteRule ^/openmct$ /openmct/index.html' >> /usr/local/apache2/conf/httpd.conf
+
+# Expose ports 80
+EXPOSE 80
+
+# Start Apache
+CMD ["httpd-foreground"]
