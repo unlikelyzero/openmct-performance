@@ -1,32 +1,31 @@
 import { chromium } from 'k6/experimental/browser';
 import { check } from 'k6';
 
+
+
 export default async function () {
   const browser = chromium.launch({ headless: false });
   const page = browser.newPage();
 
   try {
     // Go to http://localhost:9000/
-    await page.goto("http://localhost:9000/", { waitUntil: "networkidle" });
+    const response = await page.goto("http://localhost:9000/", { waitUntil: "networkidle" });
 
-    page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    // page.evaluate(() => window.performance.mark("search-available"));
+    //Open Grand Search
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
 
-      // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-    page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('tal');
+    //Search for numCommand
+    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('numCommands');
 
-      // Press Enter
-    page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').press('Enter');
+    // Press Enter
+    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').press('Enter');
 
-      // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-    page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+    await page.locator('[aria-label="numCommands yamcs.telemetry result"]').isVisible();
 
-      // Press Enter
-    page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').press('Enter');
+    check(page, {
+      'numCommands appears in search result': await page.locator('[aria-label="numCommands yamcs.telemetry result"]').isVisible(),
+    });
 
-    // check(page, {
-    //   searchResult: page.locator('div[role="presentation"]') == 'vda1.total',
-    // });
   } finally {
     page.close();
     browser.close();
