@@ -1,16 +1,19 @@
 version: '3.8'
 services:
-  # mon_apache_exporter:
-  #   image: lusotycoon/apache-exporter
-  #   container_name: mon_apache_exporter
-  #   command: '--scrape_uri "http://localhost/server-status/?auto" --telemetry.address=":9117" --insecure --telemetry.endpoint="/metrics"'
-  #   ports:
-  #     - "9117:9117"
-  #   expose:
-  #     - 9117
-  #   restart: unless-stopped
-  #   networks:
-  #     - perf_monitoring
+  mon_apache_exporter:
+    image: lusotycoon/apache-exporter
+    container_name: mon_apache_exporter
+    command: '--scrape_uri "http://localhost:8040/server-status/?auto" --web.listen-address=":9117" --insecure --telemetry.endpoint="/metrics"'
+    ports:
+      - "9117:9117"
+    expose:
+      - 9117
+    restart: unless-stopped
+    networks:
+      - perf_monitoring
+      - docker_openmct_link
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   mon_prometheus:
     image: prom/prometheus:latest
     container_name: mon_prometheus
@@ -27,7 +30,7 @@ services:
       - 9090
     networks:
       - perf_monitoring
-      - docker_perf_link
+      - docker_openmct_link
     extra_hosts:
       - "host.docker.internal:host-gateway"
   mon_cadvisor:
@@ -49,7 +52,7 @@ services:
       - 8089
     networks:
       - perf_monitoring
-      - docker_perf_link
+      - docker_openmct_link
     extra_hosts:
       - "host.docker.internal:host-gateway"
   mon_grafana:
@@ -78,32 +81,33 @@ services:
       - perf_monitoring
      extra_hosts:
       - "host.docker.internal:host-gateway"
-  mon_node_exporter:
-    image: prom/node-exporter:latest
-    container_name: mon_node_exporter
-    restart: always
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
-      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
-    ports:
-      - "9100:9100"
-    expose:
-      - 9100
-    networks:
-      - perf_monitoring
+  # mon_node_exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: mon_node_exporter
+  #   restart: always
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
+  #     - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+  #   ports:
+  #     - "9100:9100"
+  #   expose:
+  #     - 9100
+  #   networks:
+  #     - perf_monitoring
 networks:
   perf_monitoring:
+    name: perf_monitoring
     driver: bridge
-  docker_perf_link:
+  docker_openmct_link:
     external: true
 
 volumes:

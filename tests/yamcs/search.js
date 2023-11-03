@@ -8,8 +8,7 @@ export default async function () {
   const page = browser.newPage();
 
   try {
-    // Go to http://localhost:9000/
-    const response = await page.goto("http://localhost:9000/", { waitUntil: "networkidle" });
+    const response = await page.goto("http://localhost:8040/", { waitUntil: "networkidle" });
 
     //Open Grand Search
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();

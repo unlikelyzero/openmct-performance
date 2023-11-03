@@ -27,7 +27,7 @@ export async function browser() {
   try {
 
     // Go to http://localhost:9000/
-    const response = await page.goto("http://localhost:9000/", { waitUntil: "networkidle" });
+    const response = await page.goto("http://localhost:8040/", { waitUntil: "networkidle" });
     console.log(response.request()); // null
 
     //Verify that Grand Search appears
@@ -79,7 +79,7 @@ export async function browser() {
 }
 
 export function backend() {
-  const res = http.get('http://localhost:9000/yamcs-proxy/api/mdb/myproject/parameters?q=numCommands&searchMembers=true&details=false');
+  const res = http.get('http://localhost:8040/yamcs/api/mdb/myproject/parameters?q=numCommands&searchMembers=true&details=false');
 
   check(res, {
     'status is 200': (r) => r.status === 200,
