@@ -1,6 +1,6 @@
-# OpenMCT Performance Test Suite
+# Open MCT Performance Test Suite
 
-This repository contains a suite of patterns, tests, and supporting infrastructure for evaluating the performance of [OpenMCT](https://github.com/nasa/openmct) when it's used as a front end for HTTP and WS-based telemetry sources. It's designed to be used in conjunction with the [openmct-quickstart](https://github.com/scottbell/openmct-quickstart) repository.
+This repository contains a suite of patterns, tests, and supporting infrastructure for evaluating the performance of [Open MCT](https://github.com/nasa/openmct) when it's used as a front end for HTTP and WS-based telemetry sources. It's designed to be used in conjunction with the [openmct-quickstart](https://github.com/scottbell/openmct-quickstart) repository.
 
 ## Installation
 
