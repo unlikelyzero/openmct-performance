@@ -4,13 +4,14 @@ This repository contains a suite of patterns, tests, and supporting infrastructu
 
 ## Installation
 
-To set up your environment to use this test suite, follow these steps. Note that you may need to make modifications to fit your specific telemetry source.
+To set up your environment to use this test suite, follow these steps. 
 
 ### Prerequisites
 
 Ensure that `docker` and `npm` are installed on your system.
 
-### Setting Up OpenMCT Quickstart
+### Setting Up Open MCT Quickstart
+Open MCT Quickstart provides the capability of running Open MCT in a production-like configuration with a simple docker-compose up. We'll use it as the system-under-test for this repo.
 
 1. Clone the openmct-quickstart repository in a separate directory:
    ```sh
@@ -23,7 +24,7 @@ Ensure that `docker` and `npm` are installed on your system.
 
 ### Installing k6 and k6-browser
 
-1. Install the k6 binaries (for example, using Homebrew on macOS):
+1. Install the k6 binaries (for example, using Homebrew on macOS). [Official Guide](https://k6.io/docs/get-started/installation/)
    ```sh
    brew install k6
    ```
@@ -47,81 +48,34 @@ Check that the following services are available:
 
 ### Basic Example Test
 
+To verify everything is up and running, use the k6 example testcase:
 ```sh
 npm run test:example
 ```
 
-This script runs a basic test for 30 seconds with 10 virtual users.
-
-### Browser-based Test Example
-
+Execute a browser-based test script using k6:
 ```sh
 npm run test:example:browser
 ```
 
-Execute a browser-based test script using k6.
-
-### Combined Test
-
+Run a combined test which may include browser-based and traditional k6 tests:
 ```sh
 npm run test:example:combined
 ```
 
-Run a combined test which may include browser-based and traditional k6 tests.
-
 ### YAMCS Search Test
 
+Run a test specifically designed to search within YAMCS:
 ```sh
 npm run test:yamcs:search
 ```
 
-Run a test specifically designed to search within YAMCS.
+### YAMCS Search Test with Hybrid Traffic
 
-### YAMCS Search Test with Marks
-
+Perform a YAMCS search test that includes custom marks for tracking performance.
 ```sh
 npm run test:yamcs:searchWithMarks
 ```
-
-Perform a YAMCS search test that includes custom marks for tracking performance.
-
-All tests output their data to an experimental Prometheus remote-write endpoint.
-
-## Writing a har-based test from browser test
-
-1. Record Test with Playwright
-
-```sh
-npm run test:record
-```
-
-Launch the Playwright inspector for recording user interactions.
-
-2. Record HAR File
-
-```sh
-npm run har:record
-```
-
-Record network activity in a HAR file while interacting with Open MCT.
-
-
-3. Convert HAR to k6 Test
-
-```sh
-npm run har:convert
-```
-
-Convert the recorded HAR file to a k6 test script.
-
-4. YAMCS Search Test From HAR File
-
-```sh
-npm run test:yamcs:searchfromhar
-```
-
-Run a YAMCS search test that has been created from a HAR file recording.
-
 
 ## Writing k6-browser Tests
 
@@ -135,11 +89,39 @@ The recommended approach for creating k6-browser tests is to use the Playwright 
 3. Perform the actions of the test you wish to record.
 4. When finished, choose the 'Library' option in the Playwright Inspector window to export the test.
 
+## (Advanced) Writing a har-based test from browser test
+
+Since we're using playwright-like APIs, it's possible to use the playwright sdk to write tests to execute as a k6-browser test. 
+
+
+1. Record HAR File of a interactive browser test
+Record network activity in a HAR file while interacting with Open MCT.
+
+```sh
+npm run har:record
+```
+
+2. Convert HAR to k6 Test
+
+Convert the recorded HAR file to a k6 test script.
+
+```sh
+npm run har:convert
+```
+
+3. YAMCS Search Test From HAR File
+
+Run a YAMCS search test that has been created from a HAR file recording.
+
+```sh
+npm run test:yamcs:searchfromhar
+```
+
 ## Resources
 
 Below is a curated list of resources that have provided inspiration and information for this repository:
 
-- [xk6-output-prometheus-remote](https://github.com/grafana/xk6-output-prometheus-remote)
+- [grafana quickpizza](https://github.com/grafana/quickpizza)
 - [har-to-k6](https://github.com/grafana/har-to-k6)
 - [xk6-browser-template-typescript-playwright](https://github.com/ticup/xk6-browser-template-typescript-playwright)
 - [k6 Options Reference](https://k6.io/docs/using-k6/k6-options/reference/#include-system-env-vars)
