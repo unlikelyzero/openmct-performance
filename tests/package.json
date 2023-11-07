@@ -1,7 +1,7 @@
 {
     "name": "openmct-performance",
     "version": "1.0.0",
-    "description": "",
+    "description": "Companion Repo to Open MCT for demonstrating how to test performance of Open MCT",
     "main": "",
     "scripts": {
       "test:example": "K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s examples/script.js -o experimental-prometheus-rw",
@@ -15,7 +15,7 @@
       "test:yamcs:searchfromhar": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s yamcs/searchFromHar.js -o experimental-prometheus-rw"
     },
     "keywords": [],
-    "author": "",
+    "author": "John Hill",
     "license": "ISC",
     "devDependencies": {
       "@types/k6": "^0.43.0"

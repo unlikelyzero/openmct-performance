@@ -1,5 +1,7 @@
 import { chromium } from 'k6/experimental/browser';
 import { check } from 'k6';
+import { Trend } from 'k6/metrics';
+
 import http from 'k6/http';
 
 export const options = {
@@ -11,14 +13,22 @@ export const options = {
       duration: '1m',
     },
     backend: {
-      executor: 'constant-vus',
-      exec: 'backend',
-      vus: 10,
-      duration: '5m',
+      executor: 'ramping-vus',
+      exec: 'backend', // Add this line to specify the function to execute
+      startVUs: 0,
+      stages: [
+        { duration: '10s', target: 10 },
+        { duration: '20s', target: 20 },
+        { duration: '10s', target: 20 },
+        { duration: '20s', target: 30 },
+        { duration: '10s', target: 30 },
+      ],
+      gracefulRampDown: '0s',
     },
   },
 };
 
+const myTrend = new Trend('totalSearchTime');
 
 export async function browser() {
   const browser = chromium.launch({ headless: false });
@@ -42,7 +52,6 @@ export async function browser() {
     //Search for numCommand
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('numCommands');
     await page.evaluate(() => window.performance.mark('search-entered'));
-
 
     // Press Enter
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').press('Enter');
@@ -71,6 +80,9 @@ export async function browser() {
     check(page, {
       'search returns in under 242ms': totalSearchTime < 242,
     });
+
+    myTrend.add(totalSearchTime);
+
 
   } finally {
     page.close();
