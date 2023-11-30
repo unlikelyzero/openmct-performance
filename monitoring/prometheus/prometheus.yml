@@ -16,12 +16,12 @@ scrape_configs:
     metrics_path: '/metrics'
   - job_name: 'yamcs'
     static_configs:
-      - targets: [ 'host.docker.internal:8090' ]
-    metrics_path: '/api/prometheus/metrics/'
+      - targets: [ 'host.docker.internal:8040' ]
+    metrics_path: 'yamcs/api/prometheus/metrics/'
   - job_name: 'couchdb'
     static_configs:
-      - targets: [ 'host.docker.internal:5984' ]
-    metrics_path: '/_node/_local/_prometheus/'
+      - targets: [ 'host.docker.internal:8040' ]
+    metrics_path: 'couchdb/_node/_local/_prometheus/'
     basic_auth:
       username: admin
       password: password

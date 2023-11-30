@@ -1,21 +1,21 @@
 {
     "name": "openmct-performance",
     "version": "1.0.0",
-    "description": "",
+    "description": "Companion Repo to Open MCT for demonstrating how to test performance of Open MCT",
     "main": "",
     "scripts": {
       "test:example": "K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s examples/script.js -o experimental-prometheus-rw",
       "test:example:browser": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run examples/browserScript.js -o experimental-prometheus-rw",
       "test:example:combined": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run examples/combinedScript.js -o experimental-prometheus-rw",
-      "test:yamcs:search": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run yamcs/search.js --tag testid=search -o experimental-prometheus-rw",
       "test:record": "npx playwright open",
       "har:record": "npx playwright open --save-har=yamcs/har/search.har http://localhost:8040",
       "har:convert": "npx har-to-k6 yamcs/har/search.har -o yamcs/searchFromHar.js",
+      "test:yamcs:search": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run yamcs/search.js --tag testid=search -o experimental-prometheus-rw",
       "test:yamcs:searchWithMarks": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run yamcs/searchWithMarks.js --tag testid=searchWithMarks -o experimental-prometheus-rw",
       "test:yamcs:searchfromhar": "K6_BROWSER_ENABLED=true K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true k6 run --vus 10 --duration 30s yamcs/searchFromHar.js -o experimental-prometheus-rw"
     },
     "keywords": [],
-    "author": "",
+    "author": "John Hill",
     "license": "ISC",
     "devDependencies": {
       "@types/k6": "^0.43.0"
