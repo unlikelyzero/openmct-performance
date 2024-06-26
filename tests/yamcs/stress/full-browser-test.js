@@ -61,7 +61,7 @@ function createBasicAuthHeader(username, password) {
     return `Basic ${base64Credentials}`;
 }
 
-export const browserCounter = new Counter('Browser Instances');
+export const browserCounter = new Counter('Browser_Instances');
 const basicAuthHeader = createBasicAuthHeader(openmctUsername, openmctPassword);
 
 export async function browserScenario() {
