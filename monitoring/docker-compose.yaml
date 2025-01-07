@@ -3,7 +3,7 @@ services:
   mon_apache_exporter:
     image: lusotycoon/apache-exporter
     container_name: mon_apache_exporter
-    command: '--scrape_uri "http://localhost:8040/server-status/?auto" --web.listen-address=":9117" --insecure --telemetry.endpoint="/metrics"'
+    command: '--scrape_uri "http://openmct-quickstart-apache-1:8040/server-status/?auto" --web.listen-address=":9117" --insecure --telemetry.endpoint="/metrics"'
     ports:
       - "9117:9117"
     expose:

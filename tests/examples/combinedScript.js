@@ -1,14 +1,19 @@
-import { chromium } from 'k6/experimental/browser';
-import { check } from 'k6';
+import { browser } from 'k6/browser';
+import { check } from 'https://jslib.k6.io/k6-utils/1.5.0/index.js';
 import http from 'k6/http';
 
 export const options = {
   scenarios: {
     browser: {
       executor: 'constant-vus',
-      exec: 'browser',
+      exec: 'browserTest',
       vus: 1,
       duration: '10s',
+      options: {
+        browser: {
+          type: 'chromium',
+        },
+      },
     },
     news: {
       executor: 'constant-vus',
@@ -19,22 +24,20 @@ export const options = {
   },
 };
 
-export async function browser() {
-  const browser = chromium.launch({ headless: false });
-  const page = browser.newPage();
+export async function browserTest() {
+  const page = await browser.newPage();
 
   try {
     await page.goto('https://test.k6.io/browser.php');
 
-    page.locator('#checkbox1').check();
+    await page.locator('#checkbox1').check();
 
-    check(page, {
-      'checkbox is checked':
-        page.locator('#checkbox-info-display').textContent() === 'Thanks for checking the box',
+    await check(page.locator('#checkbox-info-display'), {
+      'checkbox is checked': async lo =>
+        await lo.textContent() === 'Thanks for checking the box'
     });
   } finally {
-    page.close();
-    browser.close();
+    await page.close();
   }
 }
 
